@@ -25,5 +25,11 @@ namespace ToDoPWA.Pages.Todo
         {
             ToDo = await _context.ToDo.ToListAsync();
         }
+        public async Task<IActionResult> OnGetItemsAsync()
+        {
+            var model = await _context.ToDo.ToListAsync();
+
+            return new JsonResult(model);
+        }
     }
 }

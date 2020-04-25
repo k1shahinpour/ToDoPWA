@@ -10,6 +10,7 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<div id="app"></div>
 <table class="table">
     <thead>
         <tr>
@@ -29,26 +30,52 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ToDo) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Complete)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Note)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.ToDo)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Complete)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DueDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Note)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts{ 
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                items: []
+            },
+            created: function () {
+                this.getItems();
+            },
+            methods: {
+                getItems: function () {
+                    var vm = this;
+                    $.ajax({ url: "ToDoList?handler=Items", method:"GET" })
+                        .done(function (data) {
+                            vm.items = data;
+                        }).fail(function () { });
+                }
+            }
+        });
+    </script>
+
+}
