@@ -14,6 +14,6 @@ namespace ToDoPWA.Data
         {
         }
 
-        public DbSet<ToDoPWA.Models.ToDo> ToDo { get; set; }
+        public DbSet<ToDo> ToDo { get; set; }
     }
 }

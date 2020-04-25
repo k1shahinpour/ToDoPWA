@@ -28,7 +28,7 @@ namespace ToDoPWA
             services.AddRazorPages();
 
             services.AddDbContext<ToDoPWAContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("ToDoPWAContext")));
+                    options.UseSqlite("Data Source = Data.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
