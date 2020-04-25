@@ -5,13 +5,31 @@
     ViewData["Title"] = "ToDoList";
 }
 
-<h1>ToDoList</h1>
+@*<h1>ToDoList</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
-</p>
-<div id="app"></div>
-<table class="table">
+</p>*@
+<div id="app">
+    <div class="container bg-secondary text-light rounded mb-3 p-3 shadow" v-for="item in items">
+        <p class="display-1 font-weight-lighter w-100 text-center"><span class="display-4 fa fa-check " v-if="item.complete === '1'"></span> {{item.title}}</p>
+        <div class="row">
+            <div class="col-9">
+                <span class="fa fa-clock"></span>
+            <span class=""> {{item.dueDate}}</span>
+            </div>
+            <div class="col-3 d-flex justify-content-end">
+                <a class="btn fa fa-sticky-note"></a>
+                <a class="btn fa fa-pen"></a>
+                <a class="btn fa fa-trash"></a>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+@*<table class="table">
     <thead>
         <tr>
             <th>
@@ -53,9 +71,9 @@
             </tr>
         }
     </tbody>
-</table>
+</table>*@
 
-@section Scripts{ 
+@section Scripts{
 
     <script>
         var app = new Vue({
@@ -69,7 +87,7 @@
             methods: {
                 getItems: function () {
                     var vm = this;
-                    $.ajax({ url: "ToDoList?handler=Items", method:"GET" })
+                    $.ajax({ url: "ToDoList?handler=Items", method: "GET" })
                         .done(function (data) {
                             vm.items = data;
                         }).fail(function () { });
