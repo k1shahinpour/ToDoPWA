@@ -1,0 +1,38 @@
+﻿<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title text-secondary">Add To-Do...</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body text-secondary">
+                <input v-model="title" class="form-control form-control-lg my-3" type="text" placeholder="Just a title for what you wanna do..." />
+                <div class="row my-3">
+                    <div class="col pr-1">
+                        <input v-model="date" class="form-control " type="date" />
+                    </div>
+                    <div class="col pl-1">
+                        <input v-model="time" class="form-control " type="time" />
+                    </div>
+                </div>
+
+                <textarea v-model="note" class="form-control my-3" placeholder="Leave a note as a description..." rows="5"></textarea>
+
+            </div>
+
+            <div class="btn btn-outline-success btn-lg w-50 mb-3  mx-auto" v-on:click="addItem" data-dismiss="modal">Add</div>
+
+
+            <!-- Modal footer -->
+            @*<div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>*@
+
+        </div>
+    </div>
+</div>

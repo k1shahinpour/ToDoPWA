@@ -7,71 +7,76 @@
 
 @*<h1>ToDoList</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>*@
-<div id="app">
-    <div class="container bg-secondary text-light rounded mb-3 p-3 shadow" v-for="item in items">
-        <p class="display-1 font-weight-lighter w-100 text-center"><span class="display-4 fa fa-check " v-if="item.complete === '1'"></span> {{item.title}}</p>
-        <div class="row">
-            <div class="col-9">
-                <span class="fa fa-clock"></span>
-            <span class=""> {{item.dueDate}}</span>
-            </div>
-            <div class="col-3 d-flex justify-content-end">
-                <a class="btn fa fa-sticky-note"></a>
-                <a class="btn fa fa-pen"></a>
-                <a class="btn fa fa-trash"></a>
-
-
-            </div>
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>*@
+    <div id="app">
+        <div class=" w-100 bg-primary text-light py-2  shadow-lg text-center" data-toggle="modal" data-target="#myModal" style="position:fixed; z-index:20; bottom:0; opacity:0.8">
+            <span class="fa fa-plus fa-2x"></span>
         </div>
+        <br />
+        <div class="container bg-secondary text-light rounded mb-2 p-3 shadow" v-for="item in items.slice().reverse()" >
+            <p class="display-4 font-weight-lighter w-100 text-center"><span class="display-4 fa fa-check " v-if="item.complete === '1'"></span> {{item.title}}</p>
+            <div class="row">
+                <div class="col-9">
+                    <span class="fa fa-clock"></span>
+                    <span class=""> {{item.dueDate}}</span>
+                </div>
+                <div class="col-3 d-flex justify-content-end">
+                    <a class="btn fa fa-sticky-note"></a>
+                    <a class="btn fa fa-pen"></a>
+                    <a class="btn fa fa-trash"></a>
 
+
+                </div>
+            </div>
+
+        </div>
+        <partial name="_addModal" />
     </div>
-</div>
 @*<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ToDo[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ToDo[0].Complete)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ToDo[0].DueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ToDo[0].Note)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ToDo)
-        {
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Complete)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DueDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Note)
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToDo[0].Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToDo[0].Complete)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToDo[0].DueDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToDo[0].Note)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>*@
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ToDo)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Complete)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DueDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Note)
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
 
 @section Scripts{
 
@@ -79,15 +84,68 @@
         var app = new Vue({
             el: "#app",
             data: {
-                items: []
+                items: [],
+                title: "",
+                complete: false,
+                //dueDate: "",
+                note: "",
+                date: "",
+                time: ""
             },
             created: function () {
                 this.getItems();
+                
+            },
+            computed: {
+                
+                dueDate: {
+                    get: function () {
+                        return this.date + 'T' + this.time;
+                    },
+
+                    set: function (newValue) {
+                        var params = newValue.split('T')
+                        this.date = params[0]
+                        this.time = params[1]
+                    },
+                }
+               
             },
             methods: {
+                clearData: function () {
+                    var vm = this;
+
+                    vm.title= "",
+                    vm.complete= false,
+                    vm.dueDate= "",
+                    vm.note= ""
+                },
+
+                addItem: function () {
+
+                    var vm = this;
+
+                    var newItem = {
+                        title: vm.title,
+                        complete: false,
+                        dueDate: vm.dueDate,
+                        note: vm.note
+                    }
+
+                    $.ajax({ url: "/todo", data:newItem,  method: "POST" })
+                        .done(function (data) {
+                           // vm.items.splice(0, 0, newItem)
+                            vm.items.push(newItem)
+                        }).fail(function () {
+
+                        }).always(function () {
+                            vm.clearData();
+                        });
+                },
+
                 getItems: function () {
                     var vm = this;
-                    $.ajax({ url: "ToDoList?handler=Items", method: "GET" })
+                    $.ajax({ url: "/todo", method: "GET" })
                         .done(function (data) {
                             vm.items = data;
                         }).fail(function () { });

@@ -26,6 +26,7 @@ namespace ToDoPWA
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddControllers();
 
             services.AddDbContext<ToDoPWAContext>(options =>
                     options.UseSqlite("Data Source = Data.db"));
@@ -55,6 +56,7 @@ namespace ToDoPWA
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
     }

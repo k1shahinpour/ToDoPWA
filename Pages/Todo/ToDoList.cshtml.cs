@@ -31,5 +31,12 @@ namespace ToDoPWA.Pages.Todo
 
             return new JsonResult(model);
         }
+
+        public async Task<IActionResult> OnPostItemsAsync(ToDo model)
+        {
+            await _context.ToDo.AddAsync(model);
+            await _context.SaveChangesAsync();
+            return new OkObjectResult(model);
+        }
     }
 }
