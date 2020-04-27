@@ -10,30 +10,30 @@
     <p>
         <a asp-page="Create">Create New</a>
     </p>*@
-    <div id="app">
-        <div class=" w-100 bg-primary text-light py-2  shadow-lg text-center" data-toggle="modal" data-target="#myModal" style="position:fixed; z-index:20; bottom:0; opacity:0.8">
-            <span class="fa fa-plus fa-2x"></span>
-        </div>
-        <br />
-        <div class="container bg-secondary text-light rounded mb-2 p-3 shadow" v-for="item in items.slice().reverse()" >
-            <p class="display-4 font-weight-lighter w-100 text-center"><span class="display-4 fa fa-check " v-if="item.complete === '1'"></span> {{item.title}}</p>
-            <div class="row">
-                <div class="col-9">
-                    <span class="fa fa-clock"></span>
-                    <span class=""> {{item.dueDate}}</span>
-                </div>
-                <div class="col-3 d-flex justify-content-end">
-                    <a class="btn fa fa-sticky-note"></a>
-                    <a class="btn fa fa-pen"></a>
-                    <a class="btn fa fa-trash"></a>
-
-
-                </div>
-            </div>
-
-        </div>
-        <partial name="_addModal" />
+<div id="app">
+    <div class=" w-100 bg-primary text-light py-2  shadow-lg text-center" data-toggle="modal" data-target="#myModal" style="position:fixed; z-index:20; bottom:0; opacity:0.8">
+        <span class="fa fa-plus fa-2x"></span>
     </div>
+    <br />
+    <div class="container bg-secondary text-light rounded mb-2 p-3 shadow" v-for="(item,index) in items.slice().reverse()">
+        <p class="display-4 font-weight-lighter w-100 text-center"><span class="display-4 fa fa-check " v-if="item.complete === '1'"></span> {{item.title}}</p>
+        <div class="row">
+            <div class="col-9">
+                <span class="fa fa-clock"></span>
+                <span class=""> {{item.dueDate}}</span>
+            </div>
+            <div class="col-3 d-flex justify-content-end">
+                <a class="btn fa fa-sticky-note"></a>
+                <a class="btn fa fa-pen"></a>
+                <a class="btn fa fa-trash"  v-on:click="removeItem(item,index)"></a>
+
+
+            </div>
+        </div>
+
+    </div>
+    <partial name="_addModal" />
+</div>
 @*<table class="table">
         <thead>
             <tr>
@@ -94,10 +94,10 @@
             },
             created: function () {
                 this.getItems();
-                
+
             },
             computed: {
-                
+
                 dueDate: {
                     get: function () {
                         return this.date + 'T' + this.time;
@@ -109,19 +109,31 @@
                         this.time = params[1]
                     },
                 }
-               
+
             },
             methods: {
                 clearData: function () {
                     var vm = this;
 
-                    vm.title= "",
-                    vm.complete= false,
-                    vm.dueDate= "",
-                    vm.note= ""
+                    vm.title = "",
+                        vm.complete = false,
+                        vm.dueDate = "",
+                        vm.note = ""
                 },
 
-                addItem: function () {
+                removeItem: function (item, index) {
+                    var vm = this;
+                    var itemToDelete = {
+                        id: item.id
+                    }
+
+                    $.ajax({ url: "/todo", data: itemToDelete, method: "DELETE" })
+                        .done(function (data) {
+                            vm.items.splice(vm.items.length - index -1, 1);
+                        }).fail(function () { });
+                },
+
+                    addItem: function () {
 
                     var vm = this;
 
@@ -132,10 +144,10 @@
                         note: vm.note
                     }
 
-                    $.ajax({ url: "/todo", data:newItem,  method: "POST" })
+                    $.ajax({ url: "/todo", data: newItem, method: "POST" })
                         .done(function (data) {
-                           // vm.items.splice(0, 0, newItem)
-                            vm.items.push(newItem)
+                            // vm.items.splice(0, 0, newItem)
+                            vm.items.push(data)
                         }).fail(function () {
 
                         }).always(function () {

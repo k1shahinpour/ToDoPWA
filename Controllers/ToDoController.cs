@@ -89,10 +89,11 @@ namespace ToDoPWA.Controllers
         }
 
         // DELETE: api/ToDo/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ToDo>> DeleteToDo(int id)
+        [Route("todo")]
+        [HttpDelete]
+        public async Task<ActionResult<ToDo>> DeleteToDo(ToDo model)
         {
-            var toDo = await _context.ToDo.FindAsync(id);
+            var toDo = await _context.ToDo.FindAsync(model.Id);
             if (toDo == null)
             {
                 return NotFound();
@@ -101,7 +102,7 @@ namespace ToDoPWA.Controllers
             _context.ToDo.Remove(toDo);
             await _context.SaveChangesAsync();
 
-            return toDo;
+            return Ok(model);
         }
 
         private bool ToDoExists(int id)
