@@ -9,7 +9,7 @@ using ToDoPWA.Models;
 
 namespace ToDoPWA.Pages.Todo
 {
-    public class _addModalModel : PageModel
+    public class addModalModel : PageModel
     {
         public void OnGet()
         {

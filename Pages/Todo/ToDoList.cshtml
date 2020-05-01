@@ -5,11 +5,8 @@
     ViewData["Title"] = "ToDoList";
 }
 
-@*<h1>ToDoList</h1>
 
-    <p>
-        <a asp-page="Create">Create New</a>
-    </p>*@
+
 <div id="app">
     <div class=" w-100 bg-primary text-light py-2  shadow-lg text-center" data-toggle="modal" data-target="#myModal" style="position:fixed; z-index:20; bottom:0; opacity:0.8">
         <span class="fa fa-plus fa-2x"></span>
@@ -24,59 +21,18 @@
             </div>
             <div class="col-3 d-flex justify-content-end">
                 <a class="btn fa fa-sticky-note"></a>
-                <a class="btn fa fa-pen"></a>
-                <a class="btn fa fa-trash"  v-on:click="removeItem(item,index)"></a>
+                <a class="btn fa fa-pen" data-toggle="modal" data-target="#editModal" v-on:click="editItem(item,index)"></a>
+                <a class="btn fa fa-trash" v-on:click="removeItem(item,index)"></a>
 
 
             </div>
         </div>
 
     </div>
-    <partial name="_addModal" />
+    <partial name="addModal" />
+    <partial name="editModal" />
 </div>
-@*<table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ToDo[0].Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ToDo[0].Complete)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ToDo[0].DueDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ToDo[0].Note)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.ToDo)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Complete)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DueDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Note)
-                    </td>
-                    <td>
-                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>*@
+
 
 @section Scripts{
 
@@ -90,7 +46,10 @@
                 //dueDate: "",
                 note: "",
                 date: "",
-                time: ""
+                time: "",
+                itemIdex: null,
+                itemId: null
+
             },
             created: function () {
                 this.getItems();
@@ -118,7 +77,9 @@
                     vm.title = "",
                         vm.complete = false,
                         vm.dueDate = "",
-                        vm.note = ""
+                        vm.note = "",
+                        itemIdex = null,
+                        itemId = null
                 },
 
                 removeItem: function (item, index) {
@@ -129,11 +90,45 @@
 
                     $.ajax({ url: "/todo", data: itemToDelete, method: "DELETE" })
                         .done(function (data) {
-                            vm.items.splice(vm.items.length - index -1, 1);
+                            vm.items.splice(vm.items.length - index - 1, 1);
                         }).fail(function () { });
                 },
 
-                    addItem: function () {
+                editItem: function (item, index) {
+                    this.title = item.title;
+                    this.note = item.note;
+                    this.dueDate = item.dueDate;
+                    this.complete = item.complete;
+                    itemIdex = this.items.length - index - 1;
+                    itemId = item.id;
+                    $('#editModal').modal('show');
+                },
+
+                editItemConfirm: function () {
+                    var vm = this;
+                    var newItem = {
+                        id: itemId,
+                        title: vm.title,
+                        complete: vm.complete,
+                        dueDate: vm.dueDate,
+                        note: vm.note
+                    }
+                    $.ajax({ url: "/todo", data: newItem, method: "PUT" })
+                        .done(function (data) {
+                            vm.items[itemIdex].title = newItem.title;
+                            vm.items[itemIdex].complete = newItem.complete;
+                            vm.items[itemIdex].dueDate = newItem.dueDate;
+                            vm.items[itemIdex].note = newItem.note;
+                        }).fail(function () {
+
+                        }).always(function () {
+                            vm.clearData();
+                        });
+                    $('#editModal').modal('hide');
+
+                },
+
+                addItem: function () {
 
                     var vm = this;
 

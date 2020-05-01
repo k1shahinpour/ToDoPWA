@@ -43,41 +43,27 @@ namespace ToDoPWA.Controllers
             return toDo;
         }
 
-        // PUT: api/ToDo/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutToDo(int id, ToDo toDo)
+        [Route("todo")]
+        [HttpPut]
+        public async Task<IActionResult> PutToDo(ToDo model)
         {
-            if (id != toDo.Id)
+            var toDo = await _context.ToDo.FindAsync(model.Id);
+            if (toDo == null)
             {
-                return BadRequest();
+                return NotFound(); 
             }
 
-            _context.Entry(toDo).State = EntityState.Modified;
+            toDo.Title = model.Title;
+            toDo.Note = model.Note;
+            toDo.Complete = model.Complete;
+            toDo.DueDate = model.DueDate;
+           // toDo.Id = model.Id;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ToDoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            await _context.SaveChangesAsync();
+            return Ok(model);
         }
 
-        // POST: api/ToDo
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [Route("todo")]
         [HttpPost]
         public async Task<ActionResult<ToDo>> PostToDo(ToDo model)
@@ -88,7 +74,6 @@ namespace ToDoPWA.Controllers
             return Ok(model);
         }
 
-        // DELETE: api/ToDo/5
         [Route("todo")]
         [HttpDelete]
         public async Task<ActionResult<ToDo>> DeleteToDo(ToDo model)
